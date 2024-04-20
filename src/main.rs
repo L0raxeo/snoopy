@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -6,3 +7,6 @@ fn main() -> std::io::Result<()> {
     file.write_all(b"Hello, world!")?;
     Ok(())
 }
+=======
+fn main() {}
+>>>>>>> origin/main
