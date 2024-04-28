@@ -24,5 +24,4 @@ fn generate() -> String {
 fn main() {
     let password: String = generate();
     let _ = save(&password);
-    //lolol
 }
