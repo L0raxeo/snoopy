@@ -1,15 +1,16 @@
 extern crate rand;
+use crate::snoopy_saver::snoopy_save;
 use rand::Rng;
 use std::char::{self};
-use std::fs::File;
-use std::io::prelude::*;
 
-fn save(code: &str) -> std::io::Result<()> {
-    let mut file = File::create("snoopster.txt")?;
-    file.write_all(code.as_bytes())?;
-    Ok(())
+mod snoopy_saver;
+/*
+struct Profile {
+    site: String,
+    address: String,
+    code: String,
 }
-
+*/
 fn generate() -> String {
     let mut rng = rand::thread_rng();
     let mut sequence: [char; 14] = ['0'; 14];
@@ -28,7 +29,7 @@ fn generate() -> String {
             1 => sequence[cur_slot as usize] = rng.gen_range(b'a'..=b'z') as char,
             2 => sequence[cur_slot as usize] = rng.gen_range(b'!'..=b'/') as char,
             3 => sequence[cur_slot as usize] = rng.gen_range(b'0'..=b'9') as char,
-            _ => println!("error"),
+            _ => panic!("out of range"),
         }
     }
 
@@ -43,5 +44,5 @@ fn generate() -> String {
 
 fn main() {
     let code: String = generate();
-    let _ = save(&code);
+    let _ = snoopy_save::save(&code);
 }
