@@ -1,17 +1,11 @@
 extern crate rand;
-use crate::snoopy_saver::snoopy_save;
+use file_loader::{save, Profile};
 use rand::Rng;
 use std::char::{self};
 
-mod snoopy_saver;
-/*
-struct Profile {
-    site: String,
-    address: String,
-    code: String,
-}
-*/
-fn generate() -> String {
+mod file_loader;
+
+fn generate_code() -> String {
     let mut rng = rand::thread_rng();
     let mut sequence: [char; 14] = ['0'; 14];
     let mut slots_available: [bool; 14] = [true; 14];
@@ -43,6 +37,15 @@ fn generate() -> String {
 }
 
 fn main() {
-    let code: String = generate();
-    let _ = snoopy_save::save(&code);
+    let p: Profile = Profile {
+        site: "test_site".to_string(),
+        address: "test_address".to_string(),
+        code: generate_code(),
+    };
+
+    let ps = serde_json::to_string(&p).unwrap();
+    //let pd: Profile = serde_json::from_str(&ps).unwrap(); //deserialize
+
+    let material: String = ps.to_string();
+    let _ = save(&material);
 }
