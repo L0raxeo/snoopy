@@ -2,7 +2,7 @@ extern crate rand;
 use file_loader::{save, Profile};
 use rand::Rng;
 use std::char::{self};
-use std::io;
+use std::{io, process};
 
 mod file_loader;
 
@@ -37,10 +37,18 @@ fn generate_code() -> String {
     code
 }
 
-fn new_profile() {
+fn new_profile(buffer: &mut String) {
+    println!("enter site name");
+    let _ = io::stdin().read_line(buffer);
+    let site: String = buffer.trim().to_string();
+
+    println!("enter address");
+    let _ = io::stdin().read_line(buffer);
+    let address: String = buffer.trim().to_string();
+
     let p: Profile = Profile {
-        site: "test_site".to_string(),
-        address: "test_address".to_string(),
+        site,
+        address,
         code: generate_code(),
     };
 
@@ -52,6 +60,10 @@ fn new_profile() {
 }
 
 fn start() -> io::Result<()> {
+    println!("Main Menu:");
+    println!("[n] = new profile");
+    println!("[e] = exit");
+
     let mut buffer = String::new();
     io::stdin().read_line(&mut buffer)?;
 
@@ -59,10 +71,10 @@ fn start() -> io::Result<()> {
 
     match user_input {
         "n" => {
-            new_profile();
+            new_profile(&mut buffer);
         }
         "e" => {
-            panic!("exiting program");
+            process::exit(0);
         }
         _ => {
             println!("invalid input");
