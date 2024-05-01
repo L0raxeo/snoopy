@@ -38,16 +38,18 @@ fn generate_code() -> String {
 }
 
 fn new_profile(buffer: &mut String) {
+    clearscreen::clear().expect("failed to clear screen");
+    buffer.clear();
+
     println!("enter site name");
     let _ = io::stdin().read_line(buffer);
-    let site: String = buffer.trim().to_string(); // trim is supposed to trim the n\r\ which is new
-                                                  // line???
+    let site: String = String::from(buffer.trim().to_string());
 
     buffer.clear();
 
     println!("enter address");
     let _ = io::stdin().read_line(buffer);
-    let address: String = buffer.trim().to_string();
+    let address: String = String::from(buffer.trim().to_string());
 
     buffer.clear();
 
@@ -67,13 +69,13 @@ fn new_profile(buffer: &mut String) {
 }
 
 fn start() -> io::Result<()> {
+    clearscreen::clear().expect("failed to clear screen");
     println!("Main Menu:");
     println!("[n] = new profile");
     println!("[e] = exit");
 
     let mut buffer = String::new();
     io::stdin().read_line(&mut buffer)?;
-
     let user_input: &str = buffer.trim();
 
     match user_input {
@@ -85,9 +87,10 @@ fn start() -> io::Result<()> {
         }
         _ => {
             println!("invalid input");
-            let _ = start();
         }
     }
+
+    let _ = start();
 
     Ok(())
 }
