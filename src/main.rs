@@ -37,21 +37,7 @@ fn generate_code() -> String {
     code
 }
 
-fn main() -> io::Result<()> {
-    let mut buffer = String::new();
-    io::stdin().read_line(&mut buffer)?;
-
-    let user_input: &str = buffer.trim();
-
-    match user_input {
-        "e" => panic!("exiting"),
-        _ => println!("{}", user_input),
-    }
-
-    Ok(())
-}
-
-fn main1() {
+fn new_profile() {
     let p: Profile = Profile {
         site: "test_site".to_string(),
         address: "test_address".to_string(),
@@ -63,4 +49,30 @@ fn main1() {
 
     let material: String = ps.to_string();
     let _ = save(&material);
+}
+
+fn start() -> io::Result<()> {
+    let mut buffer = String::new();
+    io::stdin().read_line(&mut buffer)?;
+
+    let user_input: &str = buffer.trim();
+
+    match user_input {
+        "n" => {
+            new_profile();
+        }
+        "e" => {
+            panic!("exiting program");
+        }
+        _ => {
+            println!("invalid input");
+            let _ = start();
+        }
+    }
+
+    Ok(())
+}
+
+fn main() {
+    let _ = start();
 }
