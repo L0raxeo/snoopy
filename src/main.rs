@@ -2,6 +2,7 @@ extern crate rand;
 use file_loader::{save, Profile};
 use rand::Rng;
 use std::char::{self};
+use std::io;
 
 mod file_loader;
 
@@ -36,7 +37,21 @@ fn generate_code() -> String {
     code
 }
 
-fn main() {
+fn main() -> io::Result<()> {
+    let mut buffer = String::new();
+    io::stdin().read_line(&mut buffer)?;
+
+    let user_input: &str = buffer.trim();
+
+    match user_input {
+        "e" => panic!("exiting"),
+        _ => println!("{}", user_input),
+    }
+
+    Ok(())
+}
+
+fn main1() {
     let p: Profile = Profile {
         site: "test_site".to_string(),
         address: "test_address".to_string(),
