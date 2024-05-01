@@ -40,11 +40,16 @@ fn generate_code() -> String {
 fn new_profile(buffer: &mut String) {
     println!("enter site name");
     let _ = io::stdin().read_line(buffer);
-    let site: String = buffer.trim().to_string();
+    let site: String = buffer.trim().to_string(); // trim is supposed to trim the n\r\ which is new
+                                                  // line???
+
+    buffer.clear();
 
     println!("enter address");
     let _ = io::stdin().read_line(buffer);
     let address: String = buffer.trim().to_string();
+
+    buffer.clear();
 
     let p: Profile = Profile {
         site,
@@ -53,7 +58,9 @@ fn new_profile(buffer: &mut String) {
     };
 
     let ps = serde_json::to_string(&p).unwrap();
-    //let pd: Profile = serde_json::from_str(&ps).unwrap(); //deserialize
+    let pd: Profile = serde_json::from_str(&ps).unwrap(); //deserialize
+
+    println!("{:?}", pd);
 
     let material: String = ps.to_string();
     let _ = save(&material);
