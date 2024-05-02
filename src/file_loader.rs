@@ -26,7 +26,7 @@ pub fn save_new_line(material: &str) -> io::Result<()> {
         .append(true)
         .open("foo.json")?;
 
-    file.write_all(material.as_bytes())?;
+    file.write_all(material.trim().as_bytes())?;
 
     Ok(())
 }
