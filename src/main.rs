@@ -1,5 +1,5 @@
 extern crate rand;
-use file_loader::{save, Profile};
+use file_loader::{read, read_line, save, save_new_line, Profile};
 use rand::Rng;
 use std::char::{self};
 use std::{io, process};
@@ -37,7 +37,7 @@ fn generate_code() -> String {
     code
 }
 
-fn new_profile(buffer: &mut String) {
+fn new_profile(buffer: &mut String, is_custom: bool) {
     clearscreen::clear().expect("failed to clear screen");
     buffer.clear();
 
@@ -47,31 +47,39 @@ fn new_profile(buffer: &mut String) {
 
     buffer.clear();
 
-    println!("enter address");
+    println!("\nenter address");
     let _ = io::stdin().read_line(buffer);
     let address: String = String::from(buffer.trim().to_string());
 
     buffer.clear();
 
+    let code: String = {
+        if !is_custom {
+            generate_code()
+        } else {
+            println!("\nenter custom code");
+            let _ = io::stdin().read_line(buffer);
+            String::from(buffer.trim().to_string())
+        }
+    };
+
     let p: Profile = Profile {
         site,
         address,
-        code: generate_code(),
+        code,
     };
 
     let ps = serde_json::to_string(&p).unwrap();
-    let pd: Profile = serde_json::from_str(&ps).unwrap(); //deserialize
 
-    println!("{:?}", pd);
-
-    let material: String = ps.to_string();
-    let _ = save(&material);
+    let material: String = format!("{}\n", ps.to_string());
+    let _ = save_new_line(&material);
 }
 
 fn start() -> io::Result<()> {
     clearscreen::clear().expect("failed to clear screen");
     println!("Main Menu:");
     println!("[n] = new profile");
+    println!("[n_c] = new custom profile");
     println!("[e] = exit");
 
     let mut buffer = String::new();
@@ -80,7 +88,10 @@ fn start() -> io::Result<()> {
 
     match user_input {
         "n" => {
-            new_profile(&mut buffer);
+            new_profile(&mut buffer, false);
+        }
+        "n_c" => {
+            new_profile(&mut buffer, true);
         }
         "e" => {
             process::exit(0);
