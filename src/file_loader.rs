@@ -9,24 +9,13 @@ pub struct Profile {
     pub code: String,
 }
 
-pub fn save(material: &str) -> std::io::Result<()> {
-    let mut file = File::create("foo.json")?;
-    file.write_all(material.as_bytes())?;
-    Ok(())
-}
-
-pub fn read(file_path: &str) -> String {
-    let contents = std::fs::read_to_string(file_path).expect("should have been able to read file");
-    contents
-}
-
 pub fn save_new_line(material: &str) -> io::Result<()> {
     let mut file = OpenOptions::new()
         .write(true)
         .append(true)
         .open("foo.json")?;
 
-    file.write_all(material.trim().as_bytes())?;
+    file.write_all(material.as_bytes())?;
 
     Ok(())
 }
@@ -45,5 +34,5 @@ pub fn read_line(target_line_number: u8) -> io::Result<String> {
         line_number += 1;
     }
 
-    Err(io::Error::new(io::ErrorKind::Other, "Line not found"))
+    Ok("-1".to_string())
 }
