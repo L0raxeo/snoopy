@@ -91,6 +91,10 @@ fn display_profiles(buffer: &mut String) {
     let _ = io::stdin().read_line(buffer);
 }
 
+fn delete_profile(buffer: &mut String) {
+    println!("soifj");
+}
+
 fn start() -> io::Result<()> {
     clearscreen::clear().expect("failed to clear screen");
     println!("Main Menu:");
