@@ -75,7 +75,7 @@ fn new_profile(buffer: &mut String, is_custom: bool) {
     let _ = save_new_line(&material);
 }
 
-fn display_profiles(buffer: &mut String) -> Result<()> {
+fn display_profiles(buffer: &mut String) {
     //  clearscreen::clear().expect("failed to clear screen");
     buffer.clear();
 
@@ -83,16 +83,15 @@ fn display_profiles(buffer: &mut String) -> Result<()> {
         let serialized_profile: String = read_line(i).unwrap();
 
         if serialized_profile != "-1".to_string() {
-            println!("test");
-            let deserialized_profile: Profile = serde_json::from_str(serialized_profile.trim())?;
+            println!("{}", serialized_profile);
+            let deserialized_profile: Profile =
+                serde_json::from_str(&serialized_profile).expect("couldn ot deserialize");
             println!("{}", deserialized_profile.site);
         }
     }
 
     println!("press any button for main menu");
     let _ = io::stdin().read_line(buffer);
-
-    Ok(())
 }
 
 //fn delete_profile(buffer: &mut String) {}
