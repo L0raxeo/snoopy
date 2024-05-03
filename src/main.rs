@@ -1,9 +1,9 @@
 extern crate rand;
 use file_loader::{read_line, save_new_line, Profile};
 use rand::Rng;
+use serde_json::Result;
 use std::char::{self};
 use std::{io, process};
-
 mod file_loader;
 
 fn generate_code() -> String {
@@ -75,28 +75,30 @@ fn new_profile(buffer: &mut String, is_custom: bool) {
     let _ = save_new_line(&material);
 }
 
-fn display_profiles(buffer: &mut String) {
-    clearscreen::clear().expect("failed to clear screen");
+fn display_profiles(buffer: &mut String) -> Result<()> {
+    //  clearscreen::clear().expect("failed to clear screen");
     buffer.clear();
 
     for i in 1..128 {
         let serialized_profile: String = read_line(i).unwrap();
 
         if serialized_profile != "-1".to_string() {
-            println!("{}", serialized_profile);
+            println!("test");
+            let deserialized_profile: Profile = serde_json::from_str(serialized_profile.trim())?;
+            println!("{}", deserialized_profile.site);
         }
     }
 
     println!("press any button for main menu");
     let _ = io::stdin().read_line(buffer);
+
+    Ok(())
 }
 
-fn delete_profile(buffer: &mut String) {
-    println!("soifj");
-}
+//fn delete_profile(buffer: &mut String) {}
 
 fn start() -> io::Result<()> {
-    clearscreen::clear().expect("failed to clear screen");
+    //    clearscreen::clear().expect("failed to clear screen");
     println!("Main Menu:");
     println!("[n] = new profile");
     println!("[n_c] = new custom profile");
@@ -115,7 +117,7 @@ fn start() -> io::Result<()> {
             new_profile(&mut buffer, true);
         }
         "d" => {
-            display_profiles(&mut buffer);
+            let _ = display_profiles(&mut buffer);
         }
         "e" => {
             process::exit(0);
