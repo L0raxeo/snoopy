@@ -1,12 +1,26 @@
 use serde::{Deserialize, Serialize};
+use std::fs;
 use std::fs::{File, OpenOptions};
 use std::io::{self, prelude::*};
+
+pub static NULL_LINE: &str = "-1";
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Profile {
     pub site: String,
     pub address: String,
     pub code: String,
+}
+
+pub fn read(file_path: String) -> String {
+    let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
+    contents
+}
+
+pub fn save_full_file(material: &str) -> io::Result<()> {
+    let mut save_file = File::create("foo.json")?;
+    save_file.write_all(material.as_bytes())?;
+    Ok(())
 }
 
 pub fn save_new_line(material: &str) -> io::Result<()> {
@@ -34,5 +48,5 @@ pub fn read_line(target_line_number: u8) -> io::Result<String> {
         line_number += 1;
     }
 
-    Ok("-1".to_string())
+    Ok(NULL_LINE.to_string())
 }

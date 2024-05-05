@@ -1,7 +1,6 @@
 extern crate rand;
-use file_loader::{read_line, save_new_line, Profile};
+use file_loader::{read, read_line, save_full_file, save_new_line, Profile, NULL_LINE};
 use rand::Rng;
-use serde_json::Result;
 use std::char::{self};
 use std::{io, process};
 mod file_loader;
@@ -69,39 +68,80 @@ fn new_profile(buffer: &mut String, is_custom: bool) {
         code,
     };
 
-    let mut serialized_profile = serde_json::to_string(&p).unwrap();
-    serialized_profile.push(',');
+    let serialized_profile = serde_json::to_string(&p).unwrap();
     let material: String = format!("{}\n", serialized_profile.to_string());
     let _ = save_new_line(&material);
 }
 
-fn display_profiles(buffer: &mut String) {
-    //  clearscreen::clear().expect("failed to clear screen");
+fn get_profile_line_in_file(buffer: &mut String) -> u8 {
+    clearscreen::clear().expect("failed to clear screen");
     buffer.clear();
 
     for i in 1..128 {
-        let serialized_profile: String = read_line(i).unwrap();
+        let raw_serialized_profile: String = read_line(i).unwrap();
 
-        if serialized_profile != "-1".to_string() {
-            println!("{}", serialized_profile);
+        if raw_serialized_profile != NULL_LINE && raw_serialized_profile.trim() != "" {
             let deserialized_profile: Profile =
-                serde_json::from_str(&serialized_profile).expect("couldn ot deserialize");
-            println!("{}", deserialized_profile.site);
+                serde_json::from_str(&raw_serialized_profile).unwrap();
+            println!("{}{}{}{}", "[", i, "]", deserialized_profile.site);
         }
     }
+
+    println!("choose an id [x]...");
+    let _ = io::stdin().read_line(buffer);
+    let profile_line_in_file = buffer.trim().parse::<u8>().unwrap();
+    profile_line_in_file
+}
+
+fn display_profile(buffer: &mut String) {
+    let raw_serialized_profile: String = read_line(get_profile_line_in_file(buffer)).unwrap();
+    let deserialized_profile: Profile = serde_json::from_str(&raw_serialized_profile).unwrap();
+
+    clearscreen::clear().expect("failed to clear screen");
+
+    println!(
+        "{}{}\n{}{}\n{}{}",
+        "[site]: ",
+        deserialized_profile.site,
+        "[address]: ",
+        deserialized_profile.address,
+        "[code]: ",
+        deserialized_profile.code
+    );
 
     println!("press any button for main menu");
     let _ = io::stdin().read_line(buffer);
 }
 
-//fn delete_profile(buffer: &mut String) {}
+fn delete_profile(buffer: &mut String) {
+    let profile_line_in_file: u8 = get_profile_line_in_file(buffer);
+    let file_content: String = read("foo.json".to_string());
+    let split_file: Vec<&str> = file_content.split("\n").collect();
+    let split_file_length: u8 = split_file.len().try_into().unwrap();
+
+    let mut first_half: String = Default::default();
+    let mut second_half: String = Default::default();
+
+    for i in 0..(profile_line_in_file - 1) {
+        first_half.push_str(split_file.get(i as usize).unwrap());
+        first_half.push('\n');
+    }
+
+    for i in profile_line_in_file..split_file_length {
+        second_half.push_str(split_file.get(i as usize).unwrap());
+    }
+
+    first_half.push_str(&second_half);
+    let _ = save_full_file(&first_half);
+}
 
 fn start() -> io::Result<()> {
-    //    clearscreen::clear().expect("failed to clear screen");
+    clearscreen::clear().expect("failed to clear screen");
     println!("Main Menu:");
     println!("[n] = new profile");
     println!("[n_c] = new custom profile");
     println!("[d] = display profiles");
+    println!("[del] = delete profile");
     println!("[e] = exit");
 
     let mut buffer = String::new();
@@ -116,13 +156,18 @@ fn start() -> io::Result<()> {
             new_profile(&mut buffer, true);
         }
         "d" => {
-            let _ = display_profiles(&mut buffer);
+            display_profile(&mut buffer);
+        }
+        "del" => {
+            delete_profile(&mut buffer);
         }
         "e" => {
             process::exit(0);
         }
         _ => {
             println!("invalid input");
+            println!("press any button for main menu");
+            let _ = io::stdin().read_line(&mut buffer);
         }
     }
 
