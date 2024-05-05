@@ -1,7 +1,6 @@
 extern crate rand;
 use file_loader::{read, read_line, save_full_file, save_new_line, Profile, NULL_LINE};
 use rand::Rng;
-use std::char::{self};
 use std::{io, process};
 mod file_loader;
 
