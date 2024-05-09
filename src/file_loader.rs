@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
+use std::env;
 use std::fs;
 use std::fs::{File, OpenOptions};
 use std::io::{self, prelude::*};
+use std::path::PathBuf;
 
 pub static NULL_LINE: &str = "-1";
 
@@ -12,22 +14,35 @@ pub struct Profile {
     pub code: String,
 }
 
-pub fn read(file_path: String) -> String {
+pub fn read() -> io::Result<String> {
+    let mut file_path = env::current_exe()?;
+    file_path.pop();
+    let mut file_path = PathBuf::from(file_path);
+    file_path.push("foo.json");
+
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
-    contents
+    Ok(contents)
 }
 
 pub fn save_full_file(material: &str) -> io::Result<()> {
-    let mut save_file = File::create("foo.json")?;
+    let mut file_path = env::current_exe()?;
+    file_path.pop();
+    let mut file_path = PathBuf::from(file_path);
+    file_path.push("foo.json");
+    let mut save_file = File::create(file_path)?;
     save_file.write_all(material.as_bytes())?;
     Ok(())
 }
 
 pub fn save_new_line(material: &str) -> io::Result<()> {
+    let mut file_path = env::current_exe()?;
+    file_path.pop();
+    let mut file_path = PathBuf::from(file_path);
+    file_path.push("foo.json");
     let mut file = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("foo.json")?;
+        .open(file_path)?;
 
     file.write_all(material.as_bytes())?;
 
@@ -35,7 +50,12 @@ pub fn save_new_line(material: &str) -> io::Result<()> {
 }
 
 pub fn read_line(target_line_number: u8) -> io::Result<String> {
-    let file = File::open("foo.json")?;
+    let mut file_path = env::current_exe()?;
+    file_path.pop();
+    let mut file_path = PathBuf::from(file_path);
+    file_path.push("foo.json");
+
+    let file = File::open(file_path)?;
     let reader = io::BufReader::new(file);
 
     let mut line_number = 1;

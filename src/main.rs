@@ -114,7 +114,7 @@ fn display_profile(buffer: &mut String) {
 
 fn delete_profile(buffer: &mut String) {
     let profile_line_in_file: u8 = get_profile_line_in_file(buffer);
-    let file_content: String = read("foo.json".to_string());
+    let file_content: String = read().unwrap().to_string();
     let split_file: Vec<&str> = file_content.split("\n").collect();
     let split_file_length: u8 = split_file.len().try_into().unwrap();
 
