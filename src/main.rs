@@ -6,7 +6,6 @@ mod file_loader;
 
 fn generate_code() -> String {
     let mut rng = rand::thread_rng();
-    //test
     let mut sequence: [char; 14] = ['0'; 14];
     let mut slots_available: [bool; 14] = [true; 14];
     let mut cur_slot: i32 = rng.gen_range(0..14);
